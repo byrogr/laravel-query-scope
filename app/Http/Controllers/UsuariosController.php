@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imagen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -22,16 +23,31 @@ class UsuariosController extends Controller
 
     public function create()
     {
-
-        return view('create');
+        $images = Imagen::all();
+        return view('create', compact('images'));
     }
 
     public function store(Request $request)
     {
         $file = $request->file('image');
         $filepath = "uploads/" . $file->getClientOriginalName();
-        Storage::disk('s3')->put($filepath, file_get_contents($file), 'public');
-        return redirect()->route('crear')
-                            ->with('success', 'La imagen se subio correctamente');
+
+        $image = Imagen::create(['url' => $filepath]);
+
+        Storage::disk('s3')->put($image->url, file_get_contents($file), 'public');
+
+        return redirect()
+                        ->route('crear')
+                        ->with('success', 'La imagen se subio correctamente');
+    }
+
+    public function delete($id)
+    {
+        $image = Imagen::find($id);
+        Storage::disk('s3')->delete($image->url);
+        Imagen::destroy($id);
+        return redirect()
+                        ->route('crear')
+                        ->with('success', 'La imagen se elimino correctamente');
     }
 }

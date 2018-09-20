@@ -18,3 +18,4 @@ Route::get('/', function () {
 Route::get('/buscar', "UsuariosController@index")->name('buscar');
 Route::get('/crear', "UsuariosController@create")->name('crear');
 Route::post('/subir', "UsuariosController@store")->name('subir');
+Route::delete('/eliminar/{id}', "UsuariosController@delete")->name('eliminar');
