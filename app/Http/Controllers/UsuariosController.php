@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Imagen;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\User;
 
@@ -33,12 +32,11 @@ class UsuariosController extends Controller
         $filepath = "uploads/" . $file->getClientOriginalName();
 
         $image = Imagen::create(['url' => $filepath]);
-
         Storage::disk('s3')->put($image->url, file_get_contents($file), 'public');
 
         return redirect()
-                        ->route('crear')
-                        ->with('success', 'La imagen se subio correctamente');
+                    ->route('crear')
+                    ->with('success', 'La imagen se subio correctamente');
     }
 
     public function delete($id)
@@ -47,7 +45,7 @@ class UsuariosController extends Controller
         Storage::disk('s3')->delete($image->url);
         Imagen::destroy($id);
         return redirect()
-                        ->route('crear')
-                        ->with('success', 'La imagen se elimino correctamente');
+                    ->route('crear')
+                    ->with('success', 'La imagen se elimino correctamente');
     }
 }
